@@ -5,11 +5,11 @@ import java.util.ArrayList;
 
 public class Knight extends Piece {
     public Knight(String color, int initialX) {
-        super("Knight", color, initialX, 600, color.equals(WHITE) ? 0 : 200);
+        super(KNIGHT, color, initialX, 600, color.equals(WHITE) ? 0 : 200);
     }
 
     public boolean isLegalMove(int crdX, int crdY){
-        return (Math.abs(crdX - lastCrdX) == 1 && Math.abs(crdY - lastCrdY) == 2) || (Math.abs(crdX - lastCrdX) == 2 && Math.abs(crdY - lastCrdY) == 1);
+        return (isNotMyCell(crdX, crdY) & Math.abs(crdX - crdPieceX) == 1 & Math.abs(crdY - crdPieceY) == 2) || (Math.abs(crdX - crdPieceX) == 2 & Math.abs(crdY - crdPieceY) == 1);
     }
 
     public ArrayList<Point> getLegalMoves(){
@@ -26,6 +26,6 @@ public class Knight extends Piece {
     }
 
     public boolean canTake(int crdX, int crdY){
-        return isNotMyCell(crdX, crdY) && isLegalMove(crdX,crdY);
+        return isLegalMove(crdX,crdY);
     }
 }

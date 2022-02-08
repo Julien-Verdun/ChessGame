@@ -6,10 +6,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.chesspackage.BoardDimensions.*;
+
 
 public class Pieces {
     HashMap<Integer, Piece> pieces = new HashMap<>();
-    HashMap<String, int[]> initPosPieces = new HashMap<>();
+    final HashMap<String, int[]> initPosPieces = new HashMap<>();
 
     public Pieces() {
         this.initPos();
@@ -17,18 +19,18 @@ public class Pieces {
     }
 
     void initPos(){
-        initPosPieces.put("Bishop", new int[]{2, 5});
-        initPosPieces.put("Knight", new int[]{1, 6});
-        initPosPieces.put("Tower", new int[]{0, 7});
-        initPosPieces.put("Pawn", new int[]{0,1,2,3,4,5,6,7});
+        initPosPieces.put(BISHOP, new int[]{2, 5});
+        initPosPieces.put(KNIGHT, new int[]{1, 6});
+        initPosPieces.put(TOWER, new int[]{0, 7});
+        initPosPieces.put(PAWN, new int[]{0,1,2,3,4,5,6,7});
     }
 
     Piece getNewInstance(String className, String color, int initialX) {
         return switch (className) {
-            case "Bishop" -> new Bishop(color, initialX);
-            case "Knight" -> new Knight(color, initialX);
-            case "Tower" -> new Tower(color, initialX);
-            case "Pawn" -> new Pawn(color, initialX);
+            case BISHOP -> new Bishop(color, initialX);
+            case KNIGHT -> new Knight(color, initialX);
+            case TOWER -> new Tower(color, initialX);
+            case PAWN -> new Pawn(color, initialX);
             default -> null;
         };
     }
@@ -36,16 +38,16 @@ public class Pieces {
     void initPieces(){
         pieces = new HashMap<>();
 
-        pieces.put(1, new Queen("white"));
-        pieces.put(2, new Queen("black"));
-        pieces.put(3, new King("white"));
-        pieces.put(4, new King("black"));
+        pieces.put(1, new Queen(WHITE));
+        pieces.put(2, new Queen(BLACK));
+        pieces.put(3, new King(WHITE));
+        pieces.put(4, new King(BLACK));
         int cnt = 5;
         for (Map.Entry<String, int[]> pieceType : initPosPieces.entrySet()) {
-            for (String color : new String[]{"white", "black"}){
+            for (String color : colors){
                 for (int pos : pieceType.getValue()) {
                     pieces.put(cnt, getNewInstance(pieceType.getKey(), color, pos) );
-                    //System.out.println("Legal moves " + pieceType.getKey() + " " + color + " " + pos + " " + pieces.get(cnt).getLegalMoves().toString());
+                    // System.out.println("Legal moves " + pieceType.getKey() + " " + color + " " + pos + " " + pieces.get(cnt).getLegalMoves().toString());
                     cnt++;
                 }
             }
@@ -60,6 +62,18 @@ public class Pieces {
     }
 
     void revert(){
+        // detect if it was a rock with the king x move diff and reset canRock for tower
+        for (String color: colors){
+            Piece king = getPiece(KING,color);
+            if (Math.abs(king.listPos.get(king.listPos.size()-1).x - king.listPos.get(king.listPos.size()-2).x) > 1){
+                king.unrock();
+                ArrayList<Piece> towers = getPieces(TOWER,color);
+                for (Piece tower: towers){
+                    tower.unrock();
+                }
+            }
+        }
+
         for (Map.Entry<Integer, Piece> pieceElt : pieces.entrySet()) {
             Piece piece = pieceElt.getValue();
             piece.revert();
@@ -69,7 +83,7 @@ public class Pieces {
     public Piece getPiece(String type, String color){
         for (Map.Entry<Integer, Piece> pieceElt : pieces.entrySet()) {
             Piece piece = pieceElt.getValue();
-            if (piece.isAlive && piece.type.equals(type) && piece.color.equals(color)) return piece;
+            if (piece.isAlive & piece.type.equals(type) & piece.color.equals(color)) return piece;
         }
         return null;
     }
@@ -78,7 +92,7 @@ public class Pieces {
         ArrayList<Piece> allPieces = new ArrayList<>();
         for (Map.Entry<Integer, Piece> pieceElt : pieces.entrySet()) {
             Piece piece = pieceElt.getValue();
-            if (piece.isAlive && piece.type.equals(type) && piece.color.equals(color)) allPieces.add(piece);
+            if (piece.isAlive & piece.type.equals(type) & piece.color.equals(color)) allPieces.add(piece);
         }
         return allPieces;
     }

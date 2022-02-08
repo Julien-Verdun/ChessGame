@@ -4,6 +4,8 @@ import com.chesspackage.piece.Piece;
 import java.awt.*;
 import java.util.ArrayList;
 
+import static com.chesspackage.BoardDimensions.*;
+
 public class Board extends GameLogic {
 
     public Board(){
@@ -41,21 +43,26 @@ public class Board extends GameLogic {
     }
 
     public void selectedPieceTryEat(int crdX, int crdY){
-        ArrayList<Piece> listPiecesOnCell = getPieceOnCell(crdX,crdY);
+        ArrayList<Piece> listPiecesOnCell = getPiecesOnCell(crdX,crdY);
         System.out.println("Try EAT: ");
-        if (selectedPiece.canTake(crdX,crdY) && !listPiecesOnCell.isEmpty()){
+        for (Piece piece : listPiecesOnCell){
+            piece.show();
+        }
+        System.out.println("Can take : " + selectedPiece.canTake(crdX,crdY));
+        if (selectedPiece.canTake(crdX,crdY) & !listPiecesOnCell.isEmpty()){
             boolean canEat = false;
-            for (Piece piece : listPiecesOnCell) {
-                piece.show();
+            for (int i = 0; i < listPiecesOnCell.size(); i ++) {
+                Piece piece = listPiecesOnCell.get(i);
                 if (!piece.color.equals(selectedPiece.color)) {
                     // eat a piece
                     piece.remove();
                     releasePiece(crdX, crdY);
                     canEat = true;
+                    returnLastPos();
                     break;
                 }
             }
-            if (!canEat) returnLastPos();
+            if (!canEat) System.out.println("Miam Miam La Piece");
         } else returnLastPos();
     }
 
@@ -63,13 +70,14 @@ public class Board extends GameLogic {
         Point point = pos2crd(posX, posY);
         int crdX = point.x;
         int crdY = point.y;
+        System.out.println("COLOR TO PLAY : " + colorToPlay);
         if (canPlay()){
-            if (selectedPiece.type.equals("King") && !selectedPiece.isLegalMove(crdX,crdY) && selectedPiece.canRock){
-                ArrayList<Piece> towers = pieces.getPieces("Tower", colorToPlay);
+            if (selectedPiece.type.equals(KING) & !selectedPiece.isLegalMove(crdX,crdY) & selectedPiece.canRock){
+                ArrayList<Piece> towers = pieces.getPieces(TOWER, colorToPlay);
                 if (!towers.isEmpty()){
                     boolean hasRocked = false;
                     for(int i = 0; i < towers.size(); i++){
-                        if (towers.get(i).crdPieceX == crdX && towers.get(i).crdPieceY == crdY){
+                        if (towers.get(i).crdPieceX == crdX & towers.get(i).crdPieceY == crdY){
                             // rock between king and tower
                             if (towers.get(i).canRock){
                                 rock(towers,i);
@@ -82,8 +90,11 @@ public class Board extends GameLogic {
                 } else returnLastPos();
             } else if (selectedPiece.isLegalMove(crdX, crdY) || selectedPiece.canTake(crdX, crdY)) {
                 // get piece on cell and see if it is an opponent
+                System.out.println("isPieceOnTheWay : " + isPieceOnTheWay(crdX, crdY));
                 if (!isPieceOnTheWay(crdX, crdY)) {
+                    System.out.println("isEmptyCell : " + isEmptyCell(crdX, crdY));
                     if (isEmptyCell(crdX, crdY)) {
+                        System.out.println("isLegalMove : " + selectedPiece.isLegalMove(crdX, crdY));
                         if (selectedPiece.isLegalMove(crdX, crdY)) {
                             releasePiece(crdX, crdY);
                         } else returnLastPos();
@@ -105,16 +116,15 @@ public class Board extends GameLogic {
             System.out.println("CHECK");
             // add a sub case check in case of rock
             if (isRock){
-                ArrayList<Piece> towers = pieces.getPieces("Tower", colorToPlay);
+                ArrayList<Piece> towers = pieces.getPieces(TOWER, colorToPlay);
                 // reset the canRock
                 for (Piece tower : towers) {
                     tower.unrock();
                 }
                 selectedPiece.unrock();
-
                 // find tower and returnLastPos
                 for (Piece tower : towers) {
-                    if ((tower.crdPieceX == 2 && selectedPiece.crdPieceX == 1) || (tower.crdPieceX == 5 && selectedPiece.crdPieceX == 6)) tower.returnLastPos();
+                    if ((tower.crdPieceX == 2 & selectedPiece.crdPieceX == 1) || (tower.crdPieceX == 5 & selectedPiece.crdPieceX == 6)) tower.returnLastPos();
                 }
             }
             selectedPiece.returnLastPos();

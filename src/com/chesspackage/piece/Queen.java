@@ -5,11 +5,11 @@ import java.util.ArrayList;
 
 public class Queen extends Piece {
     public Queen(String color) {
-        super("Queen", color, 3, 200, color.equals(WHITE) ? 0 : 200);
+        super(QUEEN, color, 3, 200, color.equals(WHITE) ? 0 : 200);
     }
 
     public boolean isLegalMove(int crdX, int crdY){
-        return (crdX == lastCrdX || crdY == lastCrdY || Math.abs(crdX - lastCrdX) == Math.abs(crdY - lastCrdY) );
+        return isNotMyCell(crdX, crdY) & (crdX == crdPieceX || crdY == crdPieceY || Math.abs(crdX - crdPieceX) == Math.abs(crdY - crdPieceY) );
     }
 
     public ArrayList<Point> getLegalMoves(){
@@ -48,6 +48,6 @@ public class Queen extends Piece {
     }
 
     public boolean canTake(int crdX, int crdY){
-        return isNotMyCell(crdX, crdY) && isLegalMove(crdX,crdY);
+        return isLegalMove(crdX,crdY);
     }
 }

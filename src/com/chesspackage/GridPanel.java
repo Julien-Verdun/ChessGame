@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class GridPanel extends JPanel implements MouseListener, MouseMotionListener {
     BufferedImage image;
-    Board board;
+    final Board board;
 
     GridPanel(Board board) {
         this.board = board;
@@ -63,11 +63,14 @@ public class GridPanel extends JPanel implements MouseListener, MouseMotionListe
     public void mouseClicked(MouseEvent e) {}
 
     public void mousePressed(MouseEvent e) {
+        System.out.println("            --------------------");
+        System.out.println("mousePressed");
         Point mousePos = getRealMousePos(e);
         board.findSelectedPiece(mousePos.x, mousePos.y);
     }
 
     public void mouseReleased(MouseEvent e) {
+        System.out.println("mouseReleased");
         Point mousePos = getRealMousePos(e);
         board.mouseRelease(mousePos.x, mousePos.y);
         redraw();

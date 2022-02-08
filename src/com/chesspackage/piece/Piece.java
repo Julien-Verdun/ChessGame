@@ -7,19 +7,19 @@ import java.util.ArrayList;
 
 
 public class Piece extends BoardDimensions  {
-    public String type;
-    public String color;
+    public final String type;
+    public final String color;
     public int crdPieceX;
     public int crdPieceY;
     public int posPieceX;
     public int posPieceY;
     public int lastCrdX;
     public int lastCrdY;
-    public int iniPieceX;
-    public int iniPieceY;
-    public int imagePieceX;
-    public int imagePieceY;
-    public ArrayList<Point> listPos;
+    public final int iniPieceX;
+    public final int iniPieceY;
+    public final int imagePieceX;
+    public final int imagePieceY;
+    public final ArrayList<Point> listPos;
     public boolean isAlive;
     public int deathTurn;
     public boolean canRock = false;
@@ -28,7 +28,7 @@ public class Piece extends BoardDimensions  {
         this.type = type;
         this.color = color;
         this.iniPieceX = iniPieceX;
-        this.iniPieceY = type.equals("Pawn") ? (isTop() ? 1 : 6) : (isTop() ? 0 : 7);
+        this.iniPieceY = type.equals(PAWN) ? (isTop() ? 1 : 6) : (isTop() ? 0 : 7);
         this.imagePieceX = imagePieceX;
         this.imagePieceY = imagePieceY;
         this.listPos = new ArrayList<>();
@@ -40,11 +40,11 @@ public class Piece extends BoardDimensions  {
     }
 
     public boolean isInBoard(int crd){
-        return crd>= 0 && crd<=GRIDSIZE-1;
+        return crd>= 0 & crd<=GRIDSIZE-1;
     }
 
     public boolean isInBoard(int crdX, int crdY){
-        return isInBoard(crdX) && isInBoard(crdY);
+        return isInBoard(crdX) & isInBoard(crdY);
     }
 
     public Point crd2Pos(int crdX, int crdY){
@@ -53,15 +53,15 @@ public class Piece extends BoardDimensions  {
 
     public void convertCrd2Pos(){
         Point posPiece = this.crd2Pos(crdPieceX, crdPieceY);
-        this.posPieceX = (int) posPiece.getX();
-        this.posPieceY = (int) posPiece.getY();
+        this.posPieceX = posPiece.x;
+        this.posPieceY = posPiece.y;
     }
 
     public void moveCrd(int crdX, int crdY){
         crdPieceX = crdX;
         crdPieceY = crdY;
         convertCrd2Pos();
-        if (canRock && (type.equals("King") || type.equals("Tower"))){
+        if (canRock & (type.equals(KING) || type.equals(TOWER))){
             canRock = false;
         }
     }
@@ -72,8 +72,8 @@ public class Piece extends BoardDimensions  {
     }
 
     public void saveMove(){
-        lastCrdX = (int) listPos.get(listPos.size() - 1).getX();
-        lastCrdY = (int) listPos.get(listPos.size() - 1).getY();
+        lastCrdX = listPos.get(listPos.size() - 1).x;
+        lastCrdY = listPos.get(listPos.size() - 1).y;
         listPos.add(new Point(crdPieceX, crdPieceY));
     }
 
@@ -92,18 +92,16 @@ public class Piece extends BoardDimensions  {
 
     public void revert(){
         if (listPos.size()>1){
-            // unrock()
             listPos.remove(listPos.size()-1);
             crdPieceX = listPos.get(listPos.size() - 1).x;
             crdPieceY = listPos.get(listPos.size() - 1).y;
             convertCrd2Pos();
-            lastCrdX = (int) listPos.get(listPos.size() - 1).getX();
-            lastCrdY = (int) listPos.get(listPos.size() - 1).getY();
-            if (!isAlive && listPos.size() == deathTurn) {
+            lastCrdX = listPos.get(listPos.size() - 1).x;
+            lastCrdY = listPos.get(listPos.size() - 1).y;
+            if (!isAlive & listPos.size() == deathTurn) {
                 isAlive = true;
                 deathTurn = 0;
             }
-
         }
     }
 
@@ -119,7 +117,7 @@ public class Piece extends BoardDimensions  {
     }
 
     public boolean isTop(){
-        return (WHITESIDE == 0 && color.equals(WHITE)) || (WHITESIDE == 1 && color.equals(BLACK));
+        return (WHITESIDE == 0 & color.equals(WHITE)) || (WHITESIDE == 1 & color.equals(BLACK));
     }
 
     public boolean isLegalMove(int crdX, int crdY) {return false;}
@@ -129,7 +127,7 @@ public class Piece extends BoardDimensions  {
     public boolean canTake(int crdX, int crdY){return true;}
 
     public boolean isNotMyCell(int crdX, int crdY){
-        return crdX != crdPieceX && crdY != crdPieceY;
+        return crdX != crdPieceX || crdY != crdPieceY;
     }
 
     public void rock() {}

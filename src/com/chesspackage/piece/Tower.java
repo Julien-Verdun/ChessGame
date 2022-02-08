@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class Tower extends Piece {
 
     public Tower(String color, int initialX) {
-        super("Tower", color, initialX, 800, color.equals(WHITE) ? 0 : 200);
+        super(TOWER, color, initialX, 800, color.equals(WHITE) ? 0 : 200);
         canRock = true;
     }
 
@@ -18,7 +18,7 @@ public class Tower extends Piece {
     }
 
     public boolean isLegalMove(int crdX, int crdY){
-        return (crdX == lastCrdX || crdY == lastCrdY);
+        return isNotMyCell(crdX, crdY) & (crdX == crdPieceX || crdY == crdPieceY);
     }
 
     public ArrayList<Point> getLegalMoves(){
@@ -41,6 +41,6 @@ public class Tower extends Piece {
 
 
     public boolean canTake(int crdX, int crdY){
-        return isNotMyCell(crdX, crdY) && isLegalMove(crdX,crdY);
+        return isLegalMove(crdX,crdY);
     }
 }

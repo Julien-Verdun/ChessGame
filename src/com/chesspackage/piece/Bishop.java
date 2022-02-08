@@ -5,11 +5,11 @@ import java.util.ArrayList;
 
 public class Bishop extends Piece {
     public Bishop(String color, int initialX) {
-        super("Bishop", color, initialX, 400, color.equals(WHITE) ? 0 : 200);
+        super(BISHOP, color, initialX, 400, color.equals(WHITE) ? 0 : 200);
     }
 
     public boolean isLegalMove(int crdX, int crdY){
-        return (Math.abs(crdX - lastCrdX) == Math.abs(crdY - lastCrdY) );
+        return (isNotMyCell(crdX, crdY) & Math.abs(crdX - crdPieceX) == Math.abs(crdY - crdPieceY) );
     }
 
     public ArrayList<Point> getLegalMoves(){
@@ -31,7 +31,7 @@ public class Bishop extends Piece {
     }
 
     public boolean canTake(int crdX, int crdY){
-        return isNotMyCell(crdX, crdY) && isLegalMove(crdX,crdY);
+        return isLegalMove(crdX,crdY);
     }
 
 }
