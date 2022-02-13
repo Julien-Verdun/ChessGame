@@ -31,7 +31,7 @@ public class GameLogic {
     }
 
     public Boolean canPlay(){
-        return selectedPiece != null & colorToPlay.equals(selectedPiece.color);
+        return selectedPiece != null && colorToPlay.equals(selectedPiece.color);
     }
 
     public void findSelectedPiece(int selectedPosX, int selectedPosY) {
@@ -139,7 +139,7 @@ public class GameLogic {
         int kingCrdY = king.crdPieceY;
         for (int i = -1; i <= 1; i++){
             for (int j = -1; j <= 1; j++){
-                if ((i != 0 || j != 0) & 0 <= king.crdPieceX+i & king.crdPieceX+i  <= GRIDSIZE-1 & 0 <= king.crdPieceY+j & king.crdPieceY+j <= GRIDSIZE-1){
+                if ((i != 0 || j != 0) & king.isInBoard(kingCrdX+i, kingCrdY+j)){
                     // check if a cell is empty and the king is not threatened on that cell
                     if (isEmptyCell(kingCrdX+i, kingCrdY+j)){
                         // move king
@@ -183,11 +183,11 @@ public class GameLogic {
         // check if a piece can move and protect the king from the opponent threat
         for (Map.Entry<Integer, Piece> pieceElt : pieces.pieces.entrySet()) {
             Piece piece = pieceElt.getValue();
-            if (!king.color.equals(piece.color) & piece.isAlive){
+            if (king.color.equals(piece.color) & piece.isAlive){
                 ArrayList<Point> legalMoves = piece.getLegalMoves();
                 // check if one of the legal moves from the piece is legal, i.e. the cell is empty or if occupy by an enemy and piece can take
                 for (Point cell: legalMoves){
-                    if (isEmptyCell(cell.x, cell.y) || (getPiecesOnCell(cell.x, cell.y).get(0).color.equals(piece.color) & piece.canTake(cell.x, cell.y))){
+                    if (isEmptyCell(cell.x, cell.y) || (!getPiecesOnCell(cell.x, cell.y).get(0).color.equals(piece.color) & piece.canTake(cell.x, cell.y))){
                         // if in this position, the king is not more threatened, true
                         piece.moveCrd(cell.x, cell.y);
                         // check that king is not threaten
@@ -208,9 +208,11 @@ public class GameLogic {
         // check that king can move or that an ally piece can protect the king
         // colorToPlay is the color of the player that will play
         Piece king = pieces.getPiece(KING, colorToPlay);
+        System.out.println("canKingEscape : " + canKingEscape(king));
         if (canKingEscape(king)){
             return false;
         } else {
+            System.out.println("canPieceProtectKing : " + canPieceProtectKing(king));
             return !canPieceProtectKing(king);
         }
     }

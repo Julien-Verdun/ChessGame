@@ -29,7 +29,7 @@ public class GridPanel extends JPanel implements MouseListener, MouseMotionListe
     protected void paintBackground(Graphics g){
         for (int i = 0; i < GRIDSIZE; i ++)
             for (int j = 0; j < GRIDSIZE; j++) {
-                if ((i + j) % 2 == 0) g.setColor(Color.GREEN);
+                if ((i + j + (WHITESIDE==0 ? 0 : 1)) % 2 == 0 ) g.setColor(Color.GREEN);
                 else g.setColor(Color.WHITE);
                 g.fillRect(PADDINGX + CELLSIZE * i, PADDINGY + CELLSIZE * j, CELLSIZE, CELLSIZE);
                 g.setColor(Color.BLACK);

@@ -63,13 +63,15 @@ public class Pieces {
 
     void revert(){
         // detect if it was a rock with the king x move diff and reset canRock for tower
-        for (String color: colors){
-            Piece king = getPiece(KING,color);
-            if (Math.abs(king.listPos.get(king.listPos.size()-1).x - king.listPos.get(king.listPos.size()-2).x) > 1){
-                king.unrock();
-                ArrayList<Piece> towers = getPieces(TOWER,color);
-                for (Piece tower: towers){
-                    tower.unrock();
+        if (pieces.get(0).listPos.size()>1) {
+            for (String color: colors){
+                Piece king = getPiece(KING,color);
+                if (Math.abs(king.listPos.get(king.listPos.size()-1).x - king.listPos.get(king.listPos.size()-2).x) > 1){
+                    king.unrock();
+                    ArrayList<Piece> towers = getPieces(TOWER,color);
+                    for (Piece tower: towers){
+                        tower.unrock();
+                    }
                 }
             }
         }

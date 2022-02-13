@@ -28,7 +28,10 @@ public class Board extends GameLogic {
     }
 
     public void returnLastPos(){
-        if (selectedPiece != null) selectedPiece.returnLastPos();
+        if (selectedPiece != null) {
+            selectedPiece.returnLastPos();
+            releaseSelectedPiece();
+        }
     }
 
     public void moveCrdSelectedPiece(int crdX, int crdY){
@@ -54,15 +57,20 @@ public class Board extends GameLogic {
             for (int i = 0; i < listPiecesOnCell.size(); i ++) {
                 Piece piece = listPiecesOnCell.get(i);
                 if (!piece.color.equals(selectedPiece.color)) {
-                    // eat a piece
-                    piece.remove();
-                    releasePiece(crdX, crdY);
-                    canEat = true;
+                    boolean result = releasePiece(crdX, crdY);
+                    if (result){
+                        // eat a piece
+                        piece.remove();
+                        canEat = true;
+                    }
                     returnLastPos();
                     break;
                 }
             }
-            if (!canEat) System.out.println("Miam Miam La Piece");
+            if (!canEat) {
+                System.out.println("Miam Miam La Piece");
+                returnLastPos();
+            }
         } else returnLastPos();
     }
 
@@ -104,16 +112,21 @@ public class Board extends GameLogic {
         } else returnLastPos();
     }
 
-    public void releasePiece(int crdX, int crdY){
-        releasePiece(crdX, crdY, false);
+    public boolean releasePiece(int crdX, int crdY){
+        return releasePiece(crdX, crdY, false);
     }
 
-    public void releasePiece(int crdX, int crdY,  boolean isRock){
+    public boolean releasePiece(int crdX, int crdY,  boolean isRock){
         moveCrdSelectedPiece(crdX,crdY);
         System.out.println("colorToPlay : " + colorToPlay);
         // if the ally king is threatened
         if (isCheck()){
             System.out.println("CHECK");
+            System.out.println("IS CHECK MAT ?");
+            if (isCheckMat()){
+                System.out.println("CHECK MAT : " + colorToPlay + "lost the game and " + getOpponentColor() + " won the game");
+            }
+
             // add a sub case check in case of rock
             if (isRock){
                 ArrayList<Piece> towers = pieces.getPieces(TOWER, colorToPlay);
@@ -128,14 +141,17 @@ public class Board extends GameLogic {
                 }
             }
             selectedPiece.returnLastPos();
+            return false;
         } else {
             System.out.println(colorToPlay + " king not threaten");
             saveMove();
             releaseSelectedPiece();
             nextTurn();
+            System.out.println("IS CHECK MAT ?");
             if (isCheckMat()){
                 System.out.println("CHECK MAT : " + colorToPlay + "lost the game and " + getOpponentColor() + " won the game");
             }
+            return true;
         }
     }
 
